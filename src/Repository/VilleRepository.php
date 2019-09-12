@@ -34,24 +34,50 @@ class VilleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByType($data)
-    {
-        $parameter = json_decode($data, true);
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.nom_ville = :nom_ville')
-            ->setParameter('nom_ville', $parameter['nom_ville'])
-            ->orderBy('v.nom_ville', 'ASC')
+    public function findByPays($nomPays){
+        $result = $this->createQueryBuilder('v')
+            ->join('v.pays', 'pays')
+            ->where('pays.nom_pays = :pays')
+            ->setParameters([
+                'pays' => $nomPays
+            ])
             ->getQuery()
             ->getResult();
+        return $result;
     }
 
-    public function findByCriteria($data)
+    public function findByType($nomType)
     {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.nom_ville = :nom_ville')
-            ->setParameter('nom_ville', $data['nom_ville'])
-            ->orderBy('v.nom_ville', 'ASC')
+        $result = $this->createQueryBuilder('v')
+            ->join('v.type', 'type')
+            ->where('type.nom_type = :type')
+            ->setParameters([
+                'type' => $nomType
+            ])
             ->getQuery()
             ->getResult();
+        return $result;
+    }
+
+    public function findByCriteria($degre, $mois, $pays, $type)
+    {
+        return $this->createQueryBuilder('v')
+            ->select('v.nom_ville, v.budget, pays.nom_pays, type.nom_type, t.degre, t.mois')
+            ->join('v.temperature', 't')
+            ->join('v.type', 'type')
+            ->join('v.pays', 'pays')
+            ->where('type.nom_type = :type')
+            ->andWhere('pays.nom_pays = :pays')
+            ->andWhere('t.degre > :degre')
+            ->andWhere('t.mois = :mois')
+            ->setParameters([
+                'degre' => $degre,
+                'mois' => $mois,
+                'pays' => $pays,
+                'type' => $type,
+            ])
+            ->orderBy('v.nom_ville', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
     }
 }

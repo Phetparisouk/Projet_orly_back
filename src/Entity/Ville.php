@@ -40,9 +40,15 @@ class Ville
      */
     private $pays;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Temperature", mappedBy="ville")
+     */
+    private $temperature;
+
     public function __construct()
     {
         $this->type = new ArrayCollection();
+        $this->temperature = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,6 +114,37 @@ class Ville
     public function setPays(?Pays $pays): self
     {
         $this->pays = $pays;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Temperature[]
+     */
+    public function getTemperature(): Collection
+    {
+        return $this->temperature;
+    }
+
+    public function addTemperature(Temperature $temperature): self
+    {
+        if (!$this->temperature->contains($temperature)) {
+            $this->temperature[] = $temperature;
+            $temperature->setVille($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTemperature(Temperature $temperature): self
+    {
+        if ($this->temperature->contains($temperature)) {
+            $this->temperature->removeElement($temperature);
+            // set the owning side to null (unless already changed)
+            if ($temperature->getVille() === $this) {
+                $temperature->setVille(null);
+            }
+        }
 
         return $this;
     }

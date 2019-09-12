@@ -19,22 +19,19 @@ class TypeVoyageRepository extends ServiceEntityRepository
         parent::__construct($registry, TypeVoyage::class);
     }
 
-    // /**
-    //  * @return TypeVoyage[] Returns an array of TypeVoyage objects
-    //  */
-    /*
-    public function findByExampleField($value)
+     /**
+      * @return TypeVoyage[] Returns an array of TypeVoyage objects
+      */
+
+    public function findByNomType($value)
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
+            ->andWhere('t.nom_type = :val')
             ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?TypeVoyage

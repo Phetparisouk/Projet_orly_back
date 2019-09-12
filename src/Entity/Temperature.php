@@ -17,6 +17,7 @@ class Temperature
     private $id;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Ville", inversedBy="villes")
+     * @ORM\JoinColumn(name="ville_id", referencedColumnName="id")
      */
     private $ville;
 
