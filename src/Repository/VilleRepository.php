@@ -14,8 +14,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class VilleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Ville::class);
     }
 
@@ -23,8 +22,7 @@ class VilleRepository extends ServiceEntityRepository
     * @return Ville[] Returns an array of Ville objects
     */
 
-   public function findByName($data)
-    {
+   public function findByName($data) {
         $parameter = json_decode($data, true);
         return $this->createQueryBuilder('v')
             ->andWhere('v.nom_ville = :nom_ville')
@@ -34,7 +32,7 @@ class VilleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByPays($nomPays){
+    public function findByPays($nomPays) {
         $result = $this->createQueryBuilder('v')
             ->join('v.pays', 'pays')
             ->where('pays.nom_pays = :pays')
@@ -46,8 +44,7 @@ class VilleRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function findByType($nomType)
-    {
+    public function findByType($nomType) {
         $result = $this->createQueryBuilder('v')
             ->join('v.type', 'type')
             ->where('type.nom_type = :type')
@@ -59,22 +56,21 @@ class VilleRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function findByCriteria($degre, $mois, $pays, $type)
-    {
+    public function findByCriteria($degre, $mois, $nom_pays, $nom_type) {
         return $this->createQueryBuilder('v')
             ->select('v.nom_ville, v.budget, pays.nom_pays, type.nom_type, t.degre, t.mois')
             ->join('v.temperature', 't')
             ->join('v.type', 'type')
             ->join('v.pays', 'pays')
-            ->where('type.nom_type = :type')
-            ->andWhere('pays.nom_pays = :pays')
+            ->where('type.nom_type = :nom_type')
+            ->andWhere('pays.nom_pays = :nom_pays')
             ->andWhere('t.degre > :degre')
             ->andWhere('t.mois = :mois')
             ->setParameters([
                 'degre' => $degre,
                 'mois' => $mois,
-                'pays' => $pays,
-                'type' => $type,
+                'nom_pays' => $nom_pays,
+                'nom_type' => $nom_type,
             ])
             ->orderBy('v.nom_ville', 'ASC')
             ->getQuery()

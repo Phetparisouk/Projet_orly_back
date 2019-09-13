@@ -14,37 +14,19 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class PaysRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Pays::class);
     }
 
-    // /**
-    //  * @return Pays[] Returns an array of Pays objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+    public function findByContinent($nom_continent) {
+        $result = $this->createQueryBuilder('p')
+            ->join('p.continent', 'continent')
+            ->where('continent.nom_continent = :nom_continent')
+            ->setParameters([
+                'nom_continent' => $nom_continent
+            ])
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
+        return $result;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Pays
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

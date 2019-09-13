@@ -18,6 +18,4 @@ class TemperatureRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Temperature::class);
     }
-
-
 }

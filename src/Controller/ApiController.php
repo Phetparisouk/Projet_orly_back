@@ -7,6 +7,9 @@ use App\Entity\Pays;
 use App\Entity\Temperature;
 use App\Entity\TypeVoyage;
 use App\Entity\Ville;
+use App\Repository\ContinentRepository;
+use App\Repository\PaysRepository;
+use App\Repository\TemperatureRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpParser\Node\Stmt\Return_;
@@ -18,37 +21,34 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiController {
 
     /**
-     * @Route("/ville", name="ville_app")
+     * @Route("/ville", name="ville")
     */
-    public function getAllVille(EntityManagerInterface $em) {
-        $repo = $em->getRepository(Ville::class);
-        $villes = $repo->findAll();
+    public function getAllVille(VilleRepository $repository) {
+        $villes = $repository->findAll();
         return $this->setDataVille($villes);
     }
 
     /**
      * @Route("/continent", name="continent")
      */
-    public function getAllContinent(EntityManagerInterface $em) {
-        $repo = $em->getRepository(Continent::class);
-        $continents = $repo->findAll();
+    public function getAllContinent(ContinentRepository $repository) {
+        $continents = $repository->findAll();
         return $this->setDataContinent($continents);
     }
 
     /**
      * @Route("/pays", name="pays")
      */
-    public function getAllPays(EntityManagerInterface $em) {
-        $repo = $em->getRepository(Pays::class);
-        $pays = $repo->findAll();
+    public function getAllPays(PaysRepository $repository) {
+        $pays = $repository->findAll();
         return $this->setDataPays($pays);
     }
+
     /**
      * @Route("/temperature", name="temperature")
      */
-    public function getAllTemperature(EntityManagerInterface $em) {
-        $repo = $em->getRepository(Temperature::class);
-        $temperatures = $repo->findAll();
+    public function getAllTemperature(TemperatureRepository $repository) {
+        $temperatures = $repository->findAll();
         return $this->setDataTemperature($temperatures);
     }
 
@@ -57,59 +57,42 @@ class ApiController {
     /**
      * @Route("/nomVille", name="nomVille", methods={"POST"})
      */
-    public function getVilleByName(EntityManagerInterface $em, Request $request) {
+    public function getVilleByName(VilleRepository $repository, Request $request) {
         $data = $request->getContent();
-        $repo = $em->getRepository(Ville::class);
-        $villes = $repo->findByName($data);
+        $villes = $repository->findByName($data);
         return $this->setDataVille($villes);
     }
 
     /**
      * @Route("/typeVille", name="typeVille", methods={"POST"})
      */
-    public function getVilleByType(VilleRepository $repository, EntityManagerInterface $em, Request $request) {
+    public function getVilleByType(VilleRepository $repository, Request $request) {
        $data = json_decode($request->getContent(),true);
        $villes = $repository->findByType($data['nom_type']);
-
-        //return new Response();
-        return $this->setDataVille($villes);
+       return $this->setDataVille($villes);
     }
-
-//    /**
-//     * @Route("/Ville", name="typeVille", methods={"POST"})
-//     */
-    /*public function getVilleByType(VilleRepository $repository, EntityManagerInterface $em, Request $request) {
-        $data = json_decode($request->getContent(),true);
-        $villes = $repository->findByType($data['nom_type']);
-
-        //return new Response();
-        return $this->setDataVille($villes);
-    }*/
-
 
     /**
      * @Route("/paysByContinent", name="paysByContinent", methods={"POST"})
      */
-    public function getPaysByContinent(EntityManagerInterface $em, Request $request) {
+    public function getPaysByContinent(PaysRepository $repository, Request $request) {
         $data = json_decode($request->getContent(), true);
-        $repo = $em->getRepository(Pays::class);
-        $pays = $repo->findBy($data);
+        $pays = $repository->findByContinent($data['nom_continent']);
         return $this->setDataPays($pays);
     }
 
     /**
-     * @Route("/search", name="search", methods={"GET","POST"})
+     * @Route("/search", name="search", methods={"POST"})
      */
-    public function search(EntityManagerInterface $em, Request $request) {
+    public function search(VilleRepository $repository, Request $request) {
         $data = json_decode($request->getContent(), true);
-        $repo = $em->getRepository(Ville::class);
-        $villes = $repo->findByCriteria(14, 'Janvier', 'Italie', 'Mer');
+        $villes = $repository->findByCriteria($data['degre'], $data['mois'], $data['nom_pays'], $data['nom_type']);
         $response = new Response(json_encode($villes), 200, [
             'Content-Type' => 'application/json'
         ]);
         return $response;
     }
-
+/**************** SET DATA ***********************/
     public function setDataVille($villes) {
         $result = array();
         foreach($villes as $ville){
@@ -180,6 +163,5 @@ class ApiController {
 
         return $response;
     }
-
 }
 
