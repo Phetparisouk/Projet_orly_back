@@ -10,6 +10,7 @@ use App\Entity\Ville;
 use App\Repository\ContinentRepository;
 use App\Repository\PaysRepository;
 use App\Repository\TemperatureRepository;
+use App\Repository\TypeVoyageRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpParser\Node\Stmt\Return_;
@@ -50,6 +51,14 @@ class ApiController {
     public function getAllTemperature(TemperatureRepository $repository) {
         $temperatures = $repository->findAll();
         return $this->setDataTemperature($temperatures);
+    }
+
+    /**
+     * @Route("/type", name="type")
+     */
+    public function getAllType(TypeVoyageRepository $repository) {
+        $types = $repository->findAll();
+        return $this->setDataType($types);
     }
 
     /***************************************************************************************************/
@@ -106,12 +115,11 @@ class ApiController {
             $objet['pays'] = $ville->getPays()->getNomPays();
             array_push($result, $objet);
         }
-
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
-
         return $response;
     }
+
     public function setDataContinent($continents) {
         $result = array();
         foreach($continents as $continent){
@@ -123,26 +131,26 @@ class ApiController {
             $objet['pays'] = $paysTab;
             array_push($result, $objet);
         }
-
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
-
         return $response;
     }
+
+    public function setDataType($types) {
+        $result = array();
+        foreach($types as $type){
+            array_push($result, $type->getNomType());
+        }
+        $response = new Response(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
     public function setDataPays($paysTab) {
         $result = array();
         foreach($paysTab as $pays){
-            $objet['nom_pays'] = $pays->getNomPays();
-            $objet['code'] = $pays->getCode();
-            $villes = array();
-            foreach($pays->getVilles() as $ville){
-                array_push($villes, $ville->getNomVille());
-            }
-            $objet['villes'] = $villes;
-            $objet['continents'] = $pays->getContinent()->getNomContinent();
-            array_push($result, $objet);
+            array_push($result,  $pays->getNomPays());
         }
-
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
 
@@ -157,10 +165,8 @@ class ApiController {
             $objet['ville'] = $temperature->getVille()->getNomVille();
             array_push($result, $objet);
         }
-
         $response = new Response(json_encode($result));
         $response->headers->set('Content-Type', 'application/json');
-
         return $response;
     }
 }
