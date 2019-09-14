@@ -13,8 +13,8 @@
 ###< symfony/web-server-bundle ###
 # Editor directories and files
 
-.idea
-.vscode
+.idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
