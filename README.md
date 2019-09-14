@@ -41,7 +41,7 @@ Vous trouverez ci-joint les 2 dépôts du projet :
 	* **symfony console make:migration**
 	* **symfony console doctrine:migration:migrate**
 	
-6. Enfin exécuter les script pour insérer des valeurs
+6. Enfin exécuter le script **projetorlyINSERT** se trouvant dans le repertoire sql pour insérer des valeurs
 
 
 7. Voila le back est pret a fonctionner :
